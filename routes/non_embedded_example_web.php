@@ -24,14 +24,18 @@ if (!config('shopify-app.appbridge_enabled')) {
         ->name(Util::getShopifyConfig('route_names.authenticate.token'));
 }
 
-Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
-})->name('homePage');
+Route::group(['middleware' => ['verify.embedded', 'verify.shopify']], function () {
+
+    Route::get('/', function () {
+        return Inertia::render('Welcome', [
+            'canLogin' => Route::has('login'),
+            'canRegister' => Route::has('register'),
+            'laravelVersion' => Application::VERSION,
+            'phpVersion' => PHP_VERSION,
+        ]);
+    })->name('home');
+    
+});
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');

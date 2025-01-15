@@ -32,6 +32,9 @@ return Application::configure(basePath: dirname(__DIR__))
             'verify.embedded' => \App\Http\Middleware\VerifyEmbedded::class,
             'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
         ]);
+        $middleware->validateCsrfTokens(except: [
+            '*'
+        ]);
 
         //
     })
