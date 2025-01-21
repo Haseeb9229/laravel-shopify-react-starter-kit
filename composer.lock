@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c8b1b85f930f8e7b3bd1c89661fc1502",
+    "content-hash": "11cf22bc7c942d8cc015088b5b470f8d",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -1554,16 +1554,16 @@
         },
         {
             "name": "kyon147/laravel-shopify",
-            "version": "v22.0.0",
+            "version": "v21.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Kyon147/laravel-shopify.git",
-                "reference": "3e99d441ca09487e7050223ba48753b0446950bc"
+                "reference": "c9eb7dfadb3d5e1c1e96b7d383de94b325854e7e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Kyon147/laravel-shopify/zipball/3e99d441ca09487e7050223ba48753b0446950bc",
-                "reference": "3e99d441ca09487e7050223ba48753b0446950bc",
+                "url": "https://api.github.com/repos/Kyon147/laravel-shopify/zipball/c9eb7dfadb3d5e1c1e96b7d383de94b325854e7e",
+                "reference": "c9eb7dfadb3d5e1c1e96b7d383de94b325854e7e",
                 "shasum": ""
             },
             "require": {
@@ -1643,7 +1643,7 @@
                     "type": "open_collective"
                 }
             ],
-            "time": "2024-11-14T10:29:40+00:00"
+            "time": "2024-09-24T12:03:09+00:00"
         },
         {
             "name": "laravel/framework",
@@ -8853,5 +8853,5 @@
         "php": "^8.2"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.6.0"
 }

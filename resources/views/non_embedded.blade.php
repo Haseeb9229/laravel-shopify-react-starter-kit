@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="shortcut icon" href="/favicon.png" type="image/png">
     <link rel="icon" href="/favicon.png" type="image/png">
-    <title>Laravel 11</title>
+    <title>Laravel</title>
     @routes
     @viteReactRefresh
     @vite(['resources/js/app.jsx'])

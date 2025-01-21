@@ -16,7 +16,7 @@ class VerifyEmbedded
     public function handle(Request $request, Closure $next): Response
     {
         if(!$request->get('shop')) {
-            return redirect()->route('home');
+            return redirect()->route('login');
         }
         return $next($request);
     }

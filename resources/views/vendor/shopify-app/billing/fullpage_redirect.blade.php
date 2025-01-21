@@ -3,21 +3,24 @@
     <head>
         <meta charset="utf-8">
         <base target="_top">
-        <meta name="shopify-api-key" content="{{ config('shopify-app.api_key') }}" />
-        <script src="https://cdn.shopify.com/shopifycloud/app-bridge.js"></script>
 
         <title>Redirecting...</title>
-
+        <script src="{{config('shopify-app.appbridge_cdn_url') ?? 'https://unpkg.com'}}/@shopify/app-bridge{{ \Osiset\ShopifyApp\Util::getShopifyConfig('appbridge_version') ? '@'.config('shopify-app.appbridge_version') : '' }}"></script>
         <script type="text/javascript">
-            document.addEventListener('DOMContentLoaded', function () {
-                let redirectUrl = "{!! $url !!}";
+            const redirectUrl = "{!! $url !!}";
 
-                if (window.top === window.self) {
-                    window.top.location.href = redirectUrl;
-                } else {
-                    open(redirectUrl, '_top');
-                }
+            const AppBridge = window['app-bridge'];
+            const createApp = AppBridge.default;
+            const Redirect = AppBridge.actions.Redirect;
+            const app = createApp({
+                apiKey: "{{ $apiKey }}",
+                host: "{{ $host }}",
             });
+
+            console.log( 'app', app );
+
+            const redirect = Redirect.create(app);
+            redirect.dispatch(Redirect.Action.REMOTE, redirectUrl);
         </script>
     </head>
     <body>
