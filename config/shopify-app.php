@@ -37,7 +37,6 @@ return [
     */
 
     'domain' => env('SHOPIFY_DOMAIN'),
-
     /*
     |--------------------------------------------------------------------------
     | Manual routes
@@ -137,26 +136,6 @@ return [
     */
 
     'prefix' => env('SHOPIFY_APP_PREFIX', ''),
-
-    /*
-    |--------------------------------------------------------------------------
-    | AppBridge Mode
-    |--------------------------------------------------------------------------
-    |
-    | AppBridge (embedded apps) are enabled by default. Set to false to use legacy
-    | mode and host the app inside your own container.
-    |
-    */
-
-    'appbridge_enabled' => (bool) env('SHOPIFY_APPBRIDGE_ENABLED', true),
-
-    // Use semver range to link to a major or minor version number.
-    // Leaving empty will use the latest version - not recommended in production.
-    'appbridge_version' => env('SHOPIFY_APPBRIDGE_VERSION', 'latest'),
-
-    // Set a new CDN URL if you want to host the AppBridge JS yourself or unpkg goes down.
-    // DO NOT include a trailing slash.
-    'appbridge_cdn_url' => env('SHOPIFY_APPBRIDGE_CDN_URL', 'https://unpkg.com'),
 
     /*
     |--------------------------------------------------------------------------
@@ -406,35 +385,22 @@ return [
     */
 
     'webhooks' => [
-        [
-            'topic' => env('SHOPIFY_WEBHOOK_1_TOPIC', ''),
-            'address' => env('SHOPIFY_WEBHOOK_1_ADDRESS', '')
-        ],
-        [
-            'topic' => env('SHOPIFY_WEBHOOK_2_TOPIC', ''),
-            'address' => env('SHOPIFY_WEBHOOK_2_ADDRESS', ''),
-        ],
-        [
-            'topic' => env('SHOPIFY_WEBHOOK_3_TOPIC', ''),
-            'address' => env('SHOPIFY_WEBHOOK_3_ADDRESS', ''),
-        ],
-        [
-            'topic' => env('SHOPIFY_WEBHOOK_4_TOPIC', ''),
-            'address' => env('SHOPIFY_WEBHOOK_4_ADDRESS', ''),
-        ],
-        [
-            'topic' => env('SHOPIFY_WEBHOOK_5_TOPIC', ''),
-            'address' => env('SHOPIFY_WEBHOOK_5_ADDRESS', ''),
-        ],
-        [
-            'topic' => env('SHOPIFY_WEBHOOK_6_TOPIC', ''),
-            'address' => env('SHOPIFY_WEBHOOK_6_ADDRESS', ''),
-        ],
-        [
-            'topic' => env('SHOPIFY_WEBHOOK_7_TOPIC', ''),
-            'address' => env('SHOPIFY_WEBHOOK_7_ADDRESS', ''),
-        ]
-    ],
+        /*
+            [
+                'topic' => env('SHOPIFY_WEBHOOK_1_TOPIC', 'ORDERS_CREATE'),
+                'address' => env('SHOPIFY_WEBHOOK_1_ADDRESS', 'https://some-app.com/webhook/orders-create')
+            ], [
+                'topic' => env('SHOPIFY_WEBHOOK_2_TOPIC', 'APP_PURCHASES_ONE_TIME_UPDATE'),
+                'address' => env('SHOPIFY_WEBHOOK_2_ADDRESS', 'https://some-app.com/webhook/purchase'),
+            ]
+            // In certain situations you may wish to map the webhook to a specific class
+            // To do this, change the array to an associative array with a 'class' key
+            'orders-create' => [
+                'topic' => env('SHOPIFY_WEBHOOK_3_TOPIC', 'ORDERS_PAID'),
+                'address' => env('SHOPIFY_WEBHOOK_3_ADDRESS', 'https://some-app.com/webhook/orders-create'),
+                'class' => \App\Shopify\Actions\ExampleAppJob::class
+            ],
+        */],
 
     /*
     |--------------------------------------------------------------------------
@@ -453,8 +419,7 @@ return [
                 'display_scope' => env('SHOPIFY_SCRIPTTAG_1_DISPLAY_SCOPE', 'online_store')
             ],
             ...
-        */
-    ],
+        */],
 
     /*
     |--------------------------------------------------------------------------
@@ -478,8 +443,7 @@ return [
                 'job' => env('AFTER_AUTHENTICATE_JOB'), // example: \App\Jobs\AfterAuthorizeJob::class
                 'inline' => env('AFTER_AUTHENTICATE_JOB_INLINE', false) // False = dispatch job for later, true = dispatch immediately
             ],
-        */
-    ],
+        */],
 
     /*
     |--------------------------------------------------------------------------
@@ -530,18 +494,6 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Enable Turbolinks or Hotwire Turbo
-    |--------------------------------------------------------------------------
-    |
-    | If you use Turbolinks/Turbo and Livewire, turn on this setting to get
-    | the token assigned automatically.
-    |
-    */
-
-    'turbo_enabled' => (bool) env('SHOPIFY_TURBO_ENABLED', false),
-
-    /*
-    |--------------------------------------------------------------------------
     | Customize Models and Table Name
     |--------------------------------------------------------------------------
     |
@@ -552,25 +504,25 @@ return [
 
     'models' => [
         /*
-         * The fully qualified class name of the Charge model.
-         */
+        * The fully qualified class name of the Charge model.
+        */
         'charge' => Osiset\ShopifyApp\Storage\Models\Charge::class,
 
         /*
-         * The fully qualified class name of the Plan model.
-         */
+        * The fully qualified class name of the Plan model.
+        */
         'plan' => Osiset\ShopifyApp\Storage\Models\Plan::class,
     ],
 
     'table_names' => [
         /*
-         * The table name for Charge model.
-         */
+        * The table name for Charge model.
+        */
         'charges' => 'charges',
 
         /*
-         * The table name for Plan model.
-         */
+        * The table name for Plan model.
+        */
         'plans' => 'plans',
 
         /*

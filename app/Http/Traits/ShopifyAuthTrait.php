@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
 use Illuminate\Http\RedirectResponse;
 use App\Providers\RouteServiceProvider;
-use Illuminate\Support\Facades\Redirect;
 use Illuminate\Contracts\View\View as ViewView;
 use Osiset\ShopifyApp\Actions\AuthenticateShop;
 use Osiset\ShopifyApp\Objects\Values\ShopDomain;
