@@ -1,11 +1,13 @@
 <?php
 
+use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\DashboardController;
 
 Route::group(['middleware' => ['verify.embedded', 'verify.shopify']], function () {
 
-    Route::get('/', [DashboardController::class, 'home'])->name('home');
+    Route::get('/', function () {
+        return Inertia::render('Dashboard');
+    })->name('home');
 
 });
 

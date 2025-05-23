@@ -61,8 +61,7 @@ trait ShopifyAuthTrait
                 'shopify-app::auth.fullpage_redirect',
                 [
                     'apiKey' => Util::getShopifyConfig('api_key', $shopOrigin),
-                    'appBridgeVersion' => Util::getShopifyConfig('appbridge_version') ? '@' . config('shopify-app.appbridge_version') : '',
-                    'authUrl' => $result['url'],
+                    'url' => $result['url'],
                     'host' => $request->get('host'),
                     'shopDomain' => $shopDomain,
                 ]
@@ -71,11 +70,6 @@ trait ShopifyAuthTrait
             $user_id = $result['shop_id']->toNative();
             if($request->has('hmac') && $request->has('host')){
                 $user = User::find($user_id);
-                // $user->update([
-                //     'hmac' => $request->get('hmac'),
-                //     'host' => $request->get('host'),
-                //     // 'plan_id' => !$user->plan_id ? 1 : $user->plan_id
-                // ]);
             }
             auth()->loginUsingId($user_id);
             return redirect()->intended(RouteServiceProvider::$home);

@@ -1,16 +1,19 @@
 <?php namespace App\Jobs;
 
+use stdClass;
+use App\Models\User;
 use Illuminate\Bus\Queueable;
+use App\Http\Traits\ResponseTrait;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
 use Osiset\ShopifyApp\Objects\Values\ShopDomain;
-use stdClass;
+use Osiset\ShopifyApp\Contracts\Queries\Shop as IShopQuery;
 
 class ProductsUpdateJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, ResponseTrait;
 
     /**
      * Shop's myshopify domain
@@ -45,12 +48,13 @@ class ProductsUpdateJob implements ShouldQueue
      *
      * @return void
      */
-    public function handle()
+    public function handle(IShopQuery $shopQuery)
     {
-        // Convert domain
         $this->shopDomain = ShopDomain::fromNative($this->shopDomain);
-
-        // Do what you wish with the data
-        // Access domain name as $this->shopDomain->toNative()
+        $shop = $shopQuery->getByDomain($this->shopDomain);
+        $user = User::where('name', $shop->name)->first();
+        $payload = $this->data;
+        $this->logData($user);
+        $this->logData($payload);
     }
 }
