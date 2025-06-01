@@ -1,0 +1,29 @@
+{
+    "product": {
+        "body_html": "<p>This Description for product-3<\/p>",
+        "created_at": "2025-05-14T10:10:03-04:00",
+        "handle": "product-3-copy-copy-copy-copy",
+        "id": 8562719228040,
+        "product_type": "accessories",
+        "title": "Product-3 (Copy) (Copy) (Copy) (Copy)",
+        "vendor": "haseeb-9229",
+        "status": "active",
+        "tags": "Premium, Sport"
+    },
+    "productVariant": {
+        "compare_at_price": "9999.00",
+        "id": 43519979159688,
+        "price": "8499.00",
+        "sku": "product-1",
+        "title": "S",
+        "inventory_item_id": 45619670810760,
+        "inventory_quantity": 9
+    },
+    "productMedia": {
+        "id": 34327273373832,
+        "position": 1,
+        "preview_image": {
+            "src": "https:\/\/cdn.shopify.com\/s\/files\/1\/0669\/0888\/1032\/files\/F0797103634_4.webp?v=1743763791"
+        }
+    }
+}
