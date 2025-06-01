@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 class DashboardController extends Controller
 {
-    public function home()
+    public function index()
     {
         return $this->render('Dashboard');
     }
