@@ -1,23 +1,29 @@
-<?php namespace App\Jobs;
+<?php
 
-use App\Http\Traits\ShopifyProductTrait;
-use stdClass;
-use App\Models\User;
-use Illuminate\Bus\Queueable;
+namespace App\Jobs;
+
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Queue\Queueable;
+use App\Http\Traits\ShopifyOrderTrait;
 use App\Http\Traits\ResponseTrait;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use stdClass;
+use App\Models\User;
 use Osiset\ShopifyApp\Objects\Values\ShopDomain;
 use Osiset\ShopifyApp\Contracts\Queries\Shop as IShopQuery;
-use App\Repositories\Product\ProductRepositoryInterface;
+use App\Repositories\Order\OrderRepositoryInterface;
 
-class ProductsDeleteJob implements ShouldQueue
+class OrdersCreateJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, ResponseTrait , ShopifyProductTrait;
+     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, ResponseTrait , ShopifyOrderTrait;
 
     /**
+     * Create a new job instance.
+     *  @var ShopDomain|string
+     */
+     /**
      * Shop's myshopify domain
      *
      * @var ShopDomain|string
@@ -31,6 +37,7 @@ class ProductsDeleteJob implements ShouldQueue
      */
     public $data;
 
+    
     /**
      * Create a new job instance.
      *
@@ -39,34 +46,31 @@ class ProductsDeleteJob implements ShouldQueue
      *
      * @return void
      */
+    
+    
     public function __construct($shopDomain, $data)
     {
         $this->shopDomain = $shopDomain;
         $this->data = $data;
     }
-
     /**
      * Execute the job.
-     *
-     * @return void
      */
-    public function handle(IShopQuery $shopQuery)
+    public function handle(IShopQuery $shopQuery): void
     {
         $this->shopDomain = ShopDomain::fromNative($this->shopDomain);
         $shop = $shopQuery->getByDomain($this->shopDomain);
         $user = User::where('name', $shop->name)->first();
-        $payload = $this->data;
-        
-        $this->logData($user);    
-        $this->logData($payload);
-
-        $this->getProductRepository(app(ProductRepositoryInterface::class));
-        if($this->DeleteProduct($payload)){
-            \Log::info("Product Delete Job Runs! ");
-        }else{
-            \Log::error("Product Delete Job Failed! ");
+        $payload = $this->data; 
+        $this->getOrderRepository(app(OrderRepositoryInterface::class));
+        if($this->StoreDataToDatabase($payload , $user , false))
+        {
+            $this->logData($user);    
+            $this->logData($payload);
+            \Log::info("Order Create Job Successfully");
+        }        
+        else{
+            \Log::error("Order Create Job Failed");
         }
-            
-       
     }
 }

@@ -1,39 +1,32 @@
-<?php namespace App\Jobs;
+<?php
 
-use App\Http\Traits\ShopifyProductTrait;
-use stdClass;
+namespace App\Jobs;
+
 use App\Models\User;
-use Illuminate\Bus\Queueable;
+use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use App\Http\Traits\ShopifyOrderTrait;
+use Log;
+use stdClass;
 use App\Http\Traits\ResponseTrait;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Osiset\ShopifyApp\Objects\Values\ShopDomain;
 use Osiset\ShopifyApp\Contracts\Queries\Shop as IShopQuery;
-use App\Repositories\Product\ProductRepositoryInterface;
+use App\Repositories\Order\OrderRepositoryInterface;
 
-class ProductsDeleteJob implements ShouldQueue
+
+class OrdersSyncJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, ResponseTrait , ShopifyProductTrait;
+    use Queueable, Dispatchable, InteractsWithQueue, SerializesModels, ShopifyOrderTrait , ResponseTrait;
 
-    /**
-     * Shop's myshopify domain
-     *
-     * @var ShopDomain|string
-     */
-    public $shopDomain;
-
-    /**
-     * The webhook data
-     *
-     * @var object
-     */
-    public $data;
+    protected $user;
+    protected $shopDomain;
+    protected $data;
 
     /**
      * Create a new job instance.
-     *
      * @param string   $shopDomain The shop's myshopify domain.
      * @param stdClass $data       The webhook data (JSON decoded).
      *
@@ -47,26 +40,22 @@ class ProductsDeleteJob implements ShouldQueue
 
     /**
      * Execute the job.
-     *
-     * @return void
      */
-    public function handle(IShopQuery $shopQuery)
+    public function handle(IShopQuery $shopQuery): void
     {
+
         $this->shopDomain = ShopDomain::fromNative($this->shopDomain);
         $shop = $shopQuery->getByDomain($this->shopDomain);
         $user = User::where('name', $shop->name)->first();
         $payload = $this->data;
-        
-        $this->logData($user);    
         $this->logData($payload);
+        $this->logData($user);
 
-        $this->getProductRepository(app(ProductRepositoryInterface::class));
-        if($this->DeleteProduct($payload)){
-            \Log::info("Product Delete Job Runs! ");
-        }else{
-            \Log::error("Product Delete Job Failed! ");
+        $this->getOrderRepository(app(OrderRepositoryInterface::class));
+        if ($this->StoreDataToDatabase($payload, $user, false)) {
+            log::info("Order Sync Job Successfully");
+        } else {
+            Log::error("Order Sync Job Failed");
         }
-            
-       
     }
 }

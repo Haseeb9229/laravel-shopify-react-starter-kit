@@ -1,5 +1,7 @@
 <?php namespace App\Jobs;
 
+use App\Http\Traits\ShopifyProductTrait;
+use Log;
 use stdClass;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
@@ -10,10 +12,11 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Osiset\ShopifyApp\Objects\Values\ShopDomain;
 use Osiset\ShopifyApp\Contracts\Queries\Shop as IShopQuery;
+use App\Repositories\Product\ProductRepositoryInterface;
 
 class ProductsUpdateJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, ResponseTrait;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, ResponseTrait , ShopifyProductTrait;
 
     /**
      * Shop's myshopify domain
@@ -54,7 +57,12 @@ class ProductsUpdateJob implements ShouldQueue
         $shop = $shopQuery->getByDomain($this->shopDomain);
         $user = User::where('name', $shop->name)->first();
         $payload = $this->data;
-        $this->logData($user);
-        $this->logData($payload);
+        $this->getProductRepository(app(ProductRepositoryInterface::class));
+        
+        if($this->StoreDataToDatabase($payload , $user , true)){
+            Log::info("Product Update Product Successfully");
+        }else{
+           Log::error("Product Update Product Failed");
+        }
     }
 }

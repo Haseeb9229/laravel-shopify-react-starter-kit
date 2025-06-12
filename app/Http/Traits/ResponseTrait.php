@@ -22,7 +22,9 @@ trait ResponseTrait
         ], $code);
     }
 
-    protected function logData($data){
+    protected function logData( $data){
         Log::info(json_encode($data, JSON_PRETTY_PRINT));
     }
+
+    
 }

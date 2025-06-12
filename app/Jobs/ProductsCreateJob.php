@@ -1,5 +1,7 @@
 <?php namespace App\Jobs;
 
+use App\Http\Controllers\Controller;
+use App\Http\Traits\ShopifyProductTrait;
 use stdClass;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
@@ -10,10 +12,12 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Osiset\ShopifyApp\Objects\Values\ShopDomain;
 use Osiset\ShopifyApp\Contracts\Queries\Shop as IShopQuery;
+use App\Repositories\Product\ProductRepositoryInterface;
+
 
 class ProductsCreateJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, ResponseTrait;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, ResponseTrait , ShopifyProductTrait;
 
     /**
      * Shop's myshopify domain
@@ -53,8 +57,13 @@ class ProductsCreateJob implements ShouldQueue
         $this->shopDomain = ShopDomain::fromNative($this->shopDomain);
         $shop = $shopQuery->getByDomain($this->shopDomain);
         $user = User::where('name', $shop->name)->first();
-        $payload = $this->data;
-        $this->logData($user);
-        $this->logData($payload);
+        $payload = $this->data;   
+        $this->getProductRepository(app(ProductRepositoryInterface::class));
+        
+        if($this->StoreDataToDatabase($payload , $user , false)){
+            \log::info("Product Create Job Successfully");
+        }else{
+            \Log::error("Product Create Job Failed");
+        }
     }
 }

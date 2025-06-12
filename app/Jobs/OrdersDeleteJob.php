@@ -1,26 +1,28 @@
-<?php namespace App\Jobs;
+<?php
 
-use App\Http\Traits\ShopifyProductTrait;
-use stdClass;
-use App\Models\User;
-use Illuminate\Bus\Queueable;
+namespace App\Jobs;
+
 use App\Http\Traits\ResponseTrait;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
+use App\Http\Traits\ShopifyOrderTrait;
+use App\Models\User;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 use Osiset\ShopifyApp\Objects\Values\ShopDomain;
 use Osiset\ShopifyApp\Contracts\Queries\Shop as IShopQuery;
-use App\Repositories\Product\ProductRepositoryInterface;
+use stdClass;
+use App\Repositories\Order\OrderRepositoryInterface;
 
-class ProductsDeleteJob implements ShouldQueue
+class OrdersDeleteJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, ResponseTrait , ShopifyProductTrait;
+      use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, ResponseTrait , ShopifyOrderTrait;
 
     /**
      * Shop's myshopify domain
      *
-     * @var ShopDomain|string
+     * @var \Osiset\ShopifyApp\Objects\Values\ShopDomain|string
      */
     public $shopDomain;
 
@@ -57,15 +59,15 @@ class ProductsDeleteJob implements ShouldQueue
         $user = User::where('name', $shop->name)->first();
         $payload = $this->data;
         
-        $this->logData($user);    
-        $this->logData($payload);
-
-        $this->getProductRepository(app(ProductRepositoryInterface::class));
-        if($this->DeleteProduct($payload)){
-            \Log::info("Product Delete Job Runs! ");
+        $this->getOrderRepository(app(OrderRepositoryInterface::class));
+       
+        if( $this->DeleteOrder($payload)){
+             \Log::info("Order Delete Job Runs! ");
         }else{
-            \Log::error("Product Delete Job Failed! ");
+            \Log::error("Order Delete Job Failed! ");
         }
+        
+
             
        
     }
