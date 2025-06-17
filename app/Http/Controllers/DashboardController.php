@@ -1,10 +1,10 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Models\User;
-use App\Jobs\OrdersSyncJob;
-use App\Repositories\Order\OrderRepositoryInterface;
+
+use App\Jobs\OrderSyncJob;
 use Illuminate\Http\Request;
+use App\Repositories\Order\OrderRepositoryInterface;
 
 
 
@@ -16,33 +16,24 @@ class DashboardController extends Controller
     {
         $this->OrderRepository = $OrderRepository;
     }
-    public function home()
+    public function index()
     {
+        OrderSyncJob::dispatch(auth()->user()->id);
         return $this->render('Dashboard');
     }
     public function orderSeacrhfilter(Request $request)
     {
         $filters = $request->all();
         $filters['relation'] = [
-            'CustomerOrder',
-            'LineItemOrder',
-            'FulfillmentOrder',
-            'ShippingAddressOrder'
+            'orderCustomer',
+            'OrderFulfillments',
+            'OrderLineItems',
+            'OrderShippingAddress',
         ];
 
         $filters['financial_status'] = $request->financial_status;
         $filters['fulfillment_status'] = $request->fulfillment_status;
 
         return $this->OrderRepository->SearchFilter( $filters);
-    }
-    public function SyncOrder(Request $request) {
-        $data = $request->all();
-        $shopDomain = $data['shop'];
-        $sync_orders = $data['sync_orders'];
-        if($sync_orders){
-            OrdersSyncJob::dispatch($shopDomain, $data);
-        }
-        
-        return response()->json(['status' => 'success']);
     }
 }

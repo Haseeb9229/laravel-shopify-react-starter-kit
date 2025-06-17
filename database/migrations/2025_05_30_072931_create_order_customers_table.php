@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration
 {
@@ -11,10 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('customer_orders', function (Blueprint $table) {
+        Schema::create('order_customers', function (Blueprint $table) {
             $table->id();
             $table->string('shopify_customer_id')->nullable();
-            $table->integer('order_id')->nullable();
             $table->string('email')->nullable();
             $table->string('first_name')->nullable();
             $table->string('last_name')->nullable();

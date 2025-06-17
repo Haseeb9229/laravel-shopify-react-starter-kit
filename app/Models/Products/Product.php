@@ -12,7 +12,7 @@ class Product extends Model
         'shopify_product_id',
         'title',
         'handle',
-        'description',
+        'body_html',
         'tags',
         'vendor',
         'product_type',
@@ -23,12 +23,12 @@ class Product extends Model
     {
         return $this->belongsTo(User::class);
     }
-    public function productVarient()
+    public function productVarients()
     {
-        return $this->hasOne(ProductVarient::class);
+        return $this->hasMany(ProductVarient::class);
     }
-    public function productMedia()
+    public function productMedias()
     {
-        return $this->hasOne(ProductMedia::class);
+        return $this->hasMany(ProductMedia::class);
     }
 }

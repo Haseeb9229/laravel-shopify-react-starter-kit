@@ -2,18 +2,18 @@
 
 namespace App\Jobs;
 
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Queue\Queueable;
-use App\Http\Traits\ShopifyOrderTrait;
-use App\Http\Traits\ResponseTrait;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
 use stdClass;
 use App\Models\User;
+use App\Http\Traits\ResponseTrait;
+use App\Http\Traits\ShopifyOrderTrait;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
 use Osiset\ShopifyApp\Objects\Values\ShopDomain;
-use Osiset\ShopifyApp\Contracts\Queries\Shop as IShopQuery;
 use App\Repositories\Order\OrderRepositoryInterface;
+use Osiset\ShopifyApp\Contracts\Queries\Shop as IShopQuery;
 
 class OrdersCreateJob implements ShouldQueue
 {
@@ -37,7 +37,7 @@ class OrdersCreateJob implements ShouldQueue
      */
     public $data;
 
-    
+
     /**
      * Create a new job instance.
      *
@@ -46,8 +46,8 @@ class OrdersCreateJob implements ShouldQueue
      *
      * @return void
      */
-    
-    
+
+
     public function __construct($shopDomain, $data)
     {
         $this->shopDomain = $shopDomain;
@@ -56,21 +56,18 @@ class OrdersCreateJob implements ShouldQueue
     /**
      * Execute the job.
      */
-    public function handle(IShopQuery $shopQuery): void
+    public function handle(IShopQuery $shopQuery)
     {
         $this->shopDomain = ShopDomain::fromNative($this->shopDomain);
         $shop = $shopQuery->getByDomain($this->shopDomain);
         $user = User::where('name', $shop->name)->first();
-        $payload = $this->data; 
+        $payload = $this->data;
         $this->getOrderRepository(app(OrderRepositoryInterface::class));
-        if($this->StoreDataToDatabase($payload , $user , false))
-        {
-            $this->logData($user);    
-            $this->logData($payload);
-            \Log::info("Order Create Job Successfully");
-        }        
+        if($this->storeData($payload , $user)){
+            $this->logInfo("Order Create Job Successfully Completed");
+        }
         else{
-            \Log::error("Order Create Job Failed");
+            $this->logInfo("Order Create Job Failed");
         }
     }
 }

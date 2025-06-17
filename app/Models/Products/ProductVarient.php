@@ -2,9 +2,9 @@
 
 namespace App\Models\Products;
 
-use App\Models\Orders\LineItemOrder;
-use Illuminate\Database\Eloquent\Model;
 use App\Models\Products\Product;
+use App\Models\Orders\OrderLineItem;
+use Illuminate\Database\Eloquent\Model;
 
 class ProductVarient extends Model
 {
@@ -21,8 +21,8 @@ class ProductVarient extends Model
 
     public function product(){
         return $this->belongsTo(Product::class);
-    }   
-    public function LineItmeOrders(){
-        return $this->hasOne(LineItemOrder::class);
-    } 
+    }
+    public function orderLineItems(){
+        return $this->hasMany(OrderLineItem::class, 'shopify_product_variant_id', 'shopify_product_variant_id');
+    }
 }

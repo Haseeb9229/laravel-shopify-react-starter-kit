@@ -4,21 +4,20 @@ namespace App\Models\Orders;
 
 use Illuminate\Database\Eloquent\Model;
 
-class FulfillmentOrder extends Model
+class OrderFulfillment extends Model
 {
-    protected $table = 'fulfilment_orders';
-
-    protected $fillable =[ 
+    protected $fillable = [
+        "shopify_order_fulfillment_id",
+        "shopify_order_fulfillment_location_id",
         "order_id",
-        "fulfillment_order_id",
-        "fulfilment_location_id",
         "name",
+        "service",
         "shipment_status",
         "status",
         "tracking_company",
         "tracking_number",
-        "tracking_url"
-        ];
+        "tracking_url",
+    ];
 
     public function order()
     {

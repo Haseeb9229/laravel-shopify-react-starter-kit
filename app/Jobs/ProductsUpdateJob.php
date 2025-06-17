@@ -1,22 +1,23 @@
-<?php namespace App\Jobs;
+<?php
+namespace App\Jobs;
 
-use App\Http\Traits\ShopifyProductTrait;
 use Log;
 use stdClass;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
 use App\Http\Traits\ResponseTrait;
 use Illuminate\Queue\SerializesModels;
+use App\Http\Traits\ShopifyProductTrait;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Osiset\ShopifyApp\Objects\Values\ShopDomain;
-use Osiset\ShopifyApp\Contracts\Queries\Shop as IShopQuery;
 use App\Repositories\Product\ProductRepositoryInterface;
+use Osiset\ShopifyApp\Contracts\Queries\Shop as IShopQuery;
 
 class ProductsUpdateJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, ResponseTrait , ShopifyProductTrait;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, ShopifyProductTrait, ResponseTrait;
 
     /**
      * Shop's myshopify domain
@@ -58,11 +59,11 @@ class ProductsUpdateJob implements ShouldQueue
         $user = User::where('name', $shop->name)->first();
         $payload = $this->data;
         $this->getProductRepository(app(ProductRepositoryInterface::class));
-        
-        if($this->StoreDataToDatabase($payload , $user , true)){
-            Log::info("Product Update Product Successfully");
-        }else{
-           Log::error("Product Update Product Failed");
+
+        if ($this->storeData($payload, $user)) {
+            $this->logInfo("Product Update Job Successfull.");
+        } else {
+            $this->logInfo("Product Update Job Failed");
         }
     }
 }

@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration
 {
@@ -15,13 +15,13 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id')->nullable();
             $table->unsignedBigInteger('shopify_product_id')->nullable();
-            $table->string('title')->nullable();
-            $table->string('handle')->nullable(); 
-            $table->string('description')->nullable();
-            $table->string('tags')->nullable();
-            $table->string('vendor')->nullable();
+            $table->text('body_html')->nullable();
+            $table->string('handle')->nullable();
             $table->string('product_type')->nullable();
+            $table->string('title')->nullable();
+            $table->string('vendor')->nullable();
             $table->string('status')->nullable();
+            $table->string('tags')->nullable();
             $table->timestamps();
         });
     }

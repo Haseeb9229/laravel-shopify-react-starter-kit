@@ -1,13 +1,13 @@
 <?php
 namespace App\Repositories\Product;
 
+use App\Models\Products\Product;
 use App\Http\Traits\ResponseTrait;
+use Illuminate\Support\Facades\Log;
+use App\Http\Resources\ProductResource;
 use App\Repositories\Product\ProductRepositoryInterface;
 use App\Repositories\ProductMedia\ProductMediaRepositoryInterface;
 use App\Repositories\ProductVarient\ProductVarientRepositoryInterface;
-use App\Models\Products\Product;
-use App\Http\Resources\ProductResource;
-use Illuminate\Support\Facades\Log;
 
 
 class ProductRepository implements ProductRepositoryInterface
@@ -22,94 +22,55 @@ class ProductRepository implements ProductRepositoryInterface
         $this->productVarient = $productVarient;
         $this->productMedia = $productMedia;
     }
-    public function getProductById(int $id)
+    public function getById(int $id)
     {
-        $getProductId = $this->model->find($id);
-        return $getProductId;
+        $product = $this->model->find($id);
+        return $product;
     }
-    public function getShopifyProductById(int $id)
+    public function getByShopifyId(int $id)
     {
-        $getProduct = $this->model->where('shopify_product_id', $id)->first();
-        return $getProduct;
-        // return new ProductResource($getProduct);
+        $product = $this->model->where('shopify_product_id', $id)->first();
+        return $product;
     }
-    public function create(array $data)
+    public function getByUserId(int $id)
     {
-        if (!empty($data)) {
+        $products = $this->model->where('user_id', $id)->get();
+        return $products;
+    }
+    public function updateOrCreate(array $data)
+    {
+        $varients = $data['variants'];
+        unset($data['variants']);
 
-            $varients = $data['variants'];
-            unset($data['variants']);
+        $medias = $data['media'];
+        unset($data['media']);
 
-            $medias = $data['media'];
-            unset($data['media']);
+        $product = $this->model->updateOrCreate($data);
 
-            $product = $this->model->create($data);
-
-            foreach ($varients as $varient) {
-                $varient['product_id'] = $product->id;
-                $this->productVarient->create($varient);
-            }
-
-            foreach ($medias as $media) {
-                $media['product_id'] = $product->id;
-                $this->productMedia->create($media);
-            }
-
-            return new ProductResource($product);
-        } else {
-            $this->sendResponse([false, "Product Data not found", $data], 404);
+        foreach ($varients as $varient) {
+            $varient['product_id'] = $product->id;
+            $this->productVarient->updateOrCreate($varient);
         }
 
-    }
-    public function update(int $id, array $data, $shopify = false)
-    {
-        if ($shopify) {
-            $product = $this->getShopifyProductById($id);
-            if ($product) {
-                $varients = $data['variants'];
-                unset($data['variants']);
-
-                $medias = $data['media'];
-                unset($data['media']);
-
-                $product->update($data);
-
-                foreach ($varients as $varient) {
-                    $varient['product_id'] = $product->id;
-                    $this->productVarient->update($varient['shopify_product_Varient_id'], $varient, $shopify);
-                }
-
-                foreach ($medias as $media) {
-                    $media['product_id'] = $product->id;
-
-                    $this->productMedia->update($media['shopify_product_media_id'], $media, $shopify);
-                }
-                $this->sendResponse([true, "Product Update Successfully", $this->logData($data)], 200);
-
-                return new ProductResource($product);
-                
-            } else {
-                $this->sendResponse([false, "Updating Product not found", $data], 404);
-            }
-
-        } else {
-            $products = $this->getProductById($id);
-            foreach ($products as $product) {
-                $product->update($data);
-                return new ProductResource($product);
-            }
+        foreach ($medias as $media) {
+            $media['product_id'] = $product->id;
+            $this->productMedia->updateOrCreate($media);
         }
+
+        return $product;
     }
     public function delete(int $id)
     {
-        $product = $this->getShopifyProductById($id);
-        if ($product) {
-            $this->productMedia->delete($product->id);
-            $this->productVarient->delete($product->id);
-            return $product->delete();
-        } else {
-            Log::error("Product in Repository Not Found for Deletion");
+        $product = $this->getById($id);
+        $variants = $this->productVarient->getByProductId($product->id);
+        $medias = $this->productMedia->getByProductId($product->id);
+        foreach ($variants as $variant) {
+            $this->productVarient->delete($variant->id);
         }
+        foreach ($medias as $media) {
+            $this->productMedia->delete($media->id);
+        }
+        $product->delete();
     }
 }
 

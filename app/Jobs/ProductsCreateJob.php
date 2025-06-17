@@ -1,18 +1,17 @@
 <?php namespace App\Jobs;
 
-use App\Http\Controllers\Controller;
-use App\Http\Traits\ShopifyProductTrait;
 use stdClass;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
 use App\Http\Traits\ResponseTrait;
 use Illuminate\Queue\SerializesModels;
+use App\Http\Traits\ShopifyProductTrait;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Osiset\ShopifyApp\Objects\Values\ShopDomain;
-use Osiset\ShopifyApp\Contracts\Queries\Shop as IShopQuery;
 use App\Repositories\Product\ProductRepositoryInterface;
+use Osiset\ShopifyApp\Contracts\Queries\Shop as IShopQuery;
 
 
 class ProductsCreateJob implements ShouldQueue
@@ -57,13 +56,14 @@ class ProductsCreateJob implements ShouldQueue
         $this->shopDomain = ShopDomain::fromNative($this->shopDomain);
         $shop = $shopQuery->getByDomain($this->shopDomain);
         $user = User::where('name', $shop->name)->first();
-        $payload = $this->data;   
+        $payload = $this->data;
+
         $this->getProductRepository(app(ProductRepositoryInterface::class));
-        
-        if($this->StoreDataToDatabase($payload , $user , false)){
-            \log::info("Product Create Job Successfully");
+
+        if($this->storeData($payload , $user )){
+            $this->logData("Product Create Job Successfull.");
         }else{
-            \Log::error("Product Create Job Failed");
+            $this->logData("Product Create Job Failed");
         }
     }
 }

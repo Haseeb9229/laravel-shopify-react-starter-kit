@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration
 {
@@ -11,12 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('fulfilment_orders', function (Blueprint $table) {
+        Schema::create('order_fulfillments', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('fulfillment_order_id')->nullable();
-            $table->unsignedBigInteger('fulfilment_location_id')->nullable();
-            $table->integer('order_id');
+            $table->unsignedBigInteger('shopify_order_fulfillment_id')->nullable();
+            $table->unsignedBigInteger('shopify_order_fulfillment_location_id')->nullable();
+            $table->unsignedBigInteger('order_id');
             $table->string('name')->nullable();
+            $table->string('service')->nullable();
             $table->string('shipment_status')->nullable();
             $table->string('status')->nullable();
             $table->string('tracking_company')->nullable();

@@ -4,11 +4,13 @@ namespace App\Repositories\ProductVarient;
 
 interface ProductVarientRepositoryInterface
 {
-    public function getProductById(int $id);
+    public function getById(int $id);
 
-    public function create(array $data);    
+    public function getByShopifyId(int $id);
 
-    public function update(int $id, array $data , $update = true);
+    public function getByProductId(int $id);
+
+    public function updateOrCreate(array $data);
 
     public function delete(int $id);
 

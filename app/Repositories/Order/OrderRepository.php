@@ -1,143 +1,109 @@
 <?php
 namespace App\Repositories\Order;
 
-use App\Http\Resources\OrderResource;
-use App\Http\Traits\ResponseTrait;
 use App\Models\Orders\Order;
-use App\Repositories\CustomerOrder\CustomerOrderRepositoryInterface;
-use App\Repositories\FulfillmentOrder\FulfillmentOrderRepositoryInterface;
-use App\Repositories\LineItemOrder\LineItemOrderRepositoryInterface;
-use App\Repositories\Order\OrderRepositoryInterface;
-use App\Repositories\ShippingAddress\ShippingAddressOrderRepositoryInterface;
-// use GuzzleHttp\Psr7\Request;
+use App\Http\Traits\ResponseTrait;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Http\Request;
+use App\Http\Resources\OrderResource;
+use App\Repositories\Order\OrderRepositoryInterface;
+use App\Repositories\OrderCustomer\OrderCustomerRepositoryInterface;
+use App\Repositories\OrderLineItem\OrderLineItemRepositoryInterface;
+use App\Repositories\OrderFulfillment\OrderFulfillmentRepositoryInterface;
+use App\Repositories\OrderShippingAddress\OrderShippingAddressRepositoryInterface;
 
 
 class OrderRepository implements OrderRepositoryInterface
 {
     use ResponseTrait;
     protected $model;
-    protected $CustomerOrder;
-    protected $LineItemOrder;
-    protected $ShippingAddressOrder;
-    protected $FulfillmentOrder;
+    protected $orderCustomer;
+    protected $orderLineItems;
+    protected $orderShippingAddress;
+    protected $orderFulfillments;
 
-    public function __construct(Order $order, CustomerOrderRepositoryInterface $CustomerOrder, LineItemOrderRepositoryInterface $LineItemOrder, ShippingAddressOrderRepositoryInterface $ShippingAddressOrder, FulfillmentOrderRepositoryInterface $FulfillmentOrder)
+    public function __construct(Order $order, OrderCustomerRepositoryInterface $orderCustomer, OrderLineItemRepositoryInterface $orderLineItems, OrderShippingAddressRepositoryInterface $orderShippingAddress, OrderFulfillmentRepositoryInterface $orderFulfillments)
     {
         $this->model = $order;
-        $this->CustomerOrder = $CustomerOrder;
-        $this->LineItemOrder = $LineItemOrder;
-        $this->ShippingAddressOrder = $ShippingAddressOrder;
-        $this->FulfillmentOrder = $FulfillmentOrder;
+        $this->orderCustomer = $orderCustomer;
+        $this->orderLineItems = $orderLineItems;
+        $this->orderShippingAddress = $orderShippingAddress;
+        $this->orderFulfillments = $orderFulfillments;
     }
-    public function getOrderById(int $id)
+    public function getById(int $id)
     {
-        $getOrderID = $this->model->find($id);
-        return new OrderResource($getOrderID);
+        $order = $this->model->find($id);
+        return $order;
     }
-    public function getShopifyOrderById(int $id)
+    public function getByShopifyId(int $id)
     {
-        $getOrder = $this->model->where('shopify_order_id', $id)->first();
-        return $getOrder;
-        // return new OrderResource($getOrder);
+        $order = $this->model->where('shopify_order_id', $id)->first();
+        return $order;
     }
-    public function create(array $data)
+    public function getByUserId(int $id)
     {
-        if ($data) {
+        $orders = $this->model->where('user_id', $id)->get();
+        return $orders;
+    }
+    public function getByCustomerId(int $id)
+    {
+        $orders = $this->model->where('order_customer_id', $id)->get();
+        return $orders;
+    }
+    public function updateOrCreate(array $data)
+    {
+        $customer = $data["customer"];
+        unset($data["customer"]);
 
-            $customer = $data["customer"];
-            unset($data["customer"]);
+        $shipping_address = $data["shipping_address"];
+        unset($data["shipping_address"]);
 
-            $shipping_address = $data["shipping_address"];
-            unset($data["shipping_address"]);
+        $lineitems = $data["line_items"];
+        unset($data["line_items"]);
 
-            $lineitems = $data["line_items"];
-            unset($data["line_items"]);
+        $fulfillments = $data["fulfillments"];
+        unset($data["fulfillments"]);
 
-            $fulfillments = $data["fulfillments"];
-            unset($data["fulfillments"]);
+        $order = $this->model->updateOrCreate([
+            'shopify_order_id' => $data['shopify_order_id'],
+            'user_id' => $data['user_id']
+        ], $data);
 
-            $order = $this->model->create($data);
+        if ($customer) {
+            $customer = $this->orderCustomer->updateOrCreate($customer);
+            $order->orderCustomer()->associate($customer);
+            $order->save();
+        }
 
-            $customer["order_id"] = $order->id;
-            $this->CustomerOrder->create($customer);
-
+        if ($shipping_address) {
             $shipping_address["order_id"] = $order->id;
-            $this->ShippingAddressOrder->create($shipping_address);
-
-            foreach ($lineitems as $item) {
-                $item["order_id"] = $order->id;
-                $this->LineItemOrder->create($item);
-            }
-
-            foreach ($fulfillments as $fulfillment) {
-                $fulfillment["order_id"] = $order->id;
-                $this->FulfillmentOrder->create($fulfillment);
-            }
-            return new OrderResource($order);
-        } else {
-            return $this->sendResponse([false, "Order Data not found", $data], 404);
+            $this->orderShippingAddress->updateOrCreate($shipping_address);
         }
 
-    }
-    public function update(int $id, array $data, $shopify = false)
-    {
-        if ($shopify) {
-            $order = $this->getShopifyOrderById($id);
-            if ($order) {
-                $customer = $data["customer"];
-                unset($data["customer"]);
-
-                $shipping_address = $data["shipping_address"];
-                unset($data["shipping_address"]);
-
-                $line_items = $data["line_items"];
-                unset($data["line_items"]);
-
-                $fulfillments = $data["fulfillments"];
-                unset($data["fulfillments"]);
-
-                $order->update($data);
-
-                $customer["order_id"] = $order->id;
-                $this->CustomerOrder->update($customer["shopify_customer_id"], $customer, true);
-
-                $shipping_address["order_id"] = $order->id;
-                $this->ShippingAddressOrder->update($shipping_address["order_id"], $shipping_address, true);
-
-                foreach ($line_items as $item) {
-                    $item["order_id"] = $order->id;
-                    $this->LineItemOrder->update($item["shopify_lineitem_id"], $item, true);
-                }
-                foreach ($fulfillments as $fulfillment) {
-                    $fulfillment["order_id"] = $order->id;
-                    $this->FulfillmentOrder->update($fulfillment["fulfillment_order_id"], $fulfillment, true);
-                }
-                return new OrderResource($order);
-            } else {
-                Log::info("Order Not Found.! Try Again.");
-            }
-        } else {
-            $Orders = $this->getOrderById($id);
-            foreach ($Orders as $order) {
-                $order->update($data);
-                return new OrderResource($order);
-            }
+        foreach ($lineitems as $item) {
+            $item["order_id"] = $order->id;
+            $this->orderLineItems->updateOrCreate($item);
         }
+        foreach ($fulfillments as $fulfillment) {
+            $fulfillment["order_id"] = $order->id;
+            $this->orderFulfillments->updateOrCreate($fulfillment);
+        }
+
+        return $order;
     }
     public function delete(int $id)
     {
-        $order = $this->getShopifyOrderById($id);
-        if ($order) {
-            $this->CustomerOrder->delete($order->id);
-            $this->ShippingAddressOrder->delete($order->id);
-            $this->LineItemOrder->delete($order->id);
-            $this->FulfillmentOrder->delete($order->id);
-            return $order->delete();
-        } else {
-            Log::error("Order in Repository Not Found for Deletion");
+        $order = $this->getById($id);
+        $shippingAddress = $this->orderShippingAddress->getByOrderId($order->id);
+        $lineItems = $this->orderLineItems->getByOrderId($order->id);
+        $fulfillments = $this->orderFulfillments->getByOrderId($order->id);
+        $this->orderShippingAddress->delete($shippingAddress->id);
+        foreach ($lineItems as $lineItem) {
+            $this->orderLineItems->delete($lineItem->id);
         }
+        foreach ($fulfillments as $fulfillment) {
+            $this->orderFulfillments->delete($fulfillment->id);
+        }
+        $order->delete();
     }
     public function SearchFilter($filters = [])
     {
@@ -152,7 +118,7 @@ class OrderRepository implements OrderRepositoryInterface
                 $q->where('name', 'LIKE', "%{$filters['query']}%")
                     ->orWhere('financial_status', 'LIKE', "%{$filters['query']}%")
                     ->orWhere("fulfillment_status", "LIKE", "%{$filters['query']}%")
-                    ->orWhereHas('CustomerOrder', function ($q) use ($filters) {
+                    ->orWhereHas('orderCustomer', function ($q) use ($filters) {
                         $q->where('first_name', 'LIKE', "%{$filters['query']}%")
                             ->orWhere('last_name', 'LIKE', "%{$filters['query']}%")
                             ->orWhere('email', 'LIKE', "%{$filters['query']}%");
@@ -162,9 +128,5 @@ class OrderRepository implements OrderRepositoryInterface
 
         return response()->json($orders);
     }
-    // public function SyncOrder()
-    // {
-       
-    // }
 }
 

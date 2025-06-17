@@ -12,7 +12,6 @@ class ProductMedia extends Model
         'shopify_product_media_id',
         'product_id',
         'position',
-        'media_content_type',
         'src',
     ];
 

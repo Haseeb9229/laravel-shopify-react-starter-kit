@@ -1,28 +1,25 @@
-<?php
+<?php namespace App\Jobs;
 
-namespace App\Jobs;
-
+use stdClass;
+use Illuminate\Bus\Queueable;
 use App\Http\Traits\ResponseTrait;
 use App\Http\Traits\ShopifyOrderTrait;
-use App\Models\User;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Foundation\Queue\Queueable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
 use Osiset\ShopifyApp\Objects\Values\ShopDomain;
-use Osiset\ShopifyApp\Contracts\Queries\Shop as IShopQuery;
-use stdClass;
 use App\Repositories\Order\OrderRepositoryInterface;
+use Osiset\ShopifyApp\Contracts\Queries\Shop as IShopQuery;
 
 class OrdersDeleteJob implements ShouldQueue
 {
-      use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, ResponseTrait , ShopifyOrderTrait;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, ResponseTrait , ShopifyOrderTrait;
 
     /**
      * Shop's myshopify domain
      *
-     * @var \Osiset\ShopifyApp\Objects\Values\ShopDomain|string
+     * @var ShopDomain|string
      */
     public $shopDomain;
 
@@ -54,21 +51,12 @@ class OrdersDeleteJob implements ShouldQueue
      */
     public function handle(IShopQuery $shopQuery)
     {
-        $this->shopDomain = ShopDomain::fromNative($this->shopDomain);
-        $shop = $shopQuery->getByDomain($this->shopDomain);
-        $user = User::where('name', $shop->name)->first();
         $payload = $this->data;
-        
         $this->getOrderRepository(app(OrderRepositoryInterface::class));
-       
-        if( $this->DeleteOrder($payload)){
-             \Log::info("Order Delete Job Runs! ");
+        if($this->deleteOrder($payload->id)){
+            $this->logInfo("Order Delete Job Sucessfull.");
         }else{
-            \Log::error("Order Delete Job Failed! ");
+            $this->logInfo("Order Delete Job Failed! ");
         }
-        
-
-            
-       
     }
 }

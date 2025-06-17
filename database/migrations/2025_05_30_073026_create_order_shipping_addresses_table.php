@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration
 {
@@ -11,15 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('shipping_address_orders', function (Blueprint $table) {
+        Schema::create('order_shipping_addresses', function (Blueprint $table) {
             $table->id();
-            $table->integer('order_id')->nullable();
+            $table->unsignedBigInteger('order_id')->nullable();
             $table->string('first_name')->nullable();
             $table->string('last_name')->nullable();
             $table->string('address1')->nullable();
             $table->string('phone')->nullable();
             $table->string('city')->nullable();
-            $table->unsignedBigInteger('zip')->nullable();
+            $table->string('zip')->nullable();
             $table->string('province')->nullable();
             $table->string('country')->nullable();
             $table->string('company')->nullable();

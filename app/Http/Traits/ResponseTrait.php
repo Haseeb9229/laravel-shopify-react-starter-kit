@@ -9,10 +9,9 @@ trait ResponseTrait
 {
     protected function render(string $component, array $props = [])
     {
-        $prefix = env('SHOPIFY_APPBRIDGE_ENABLED') ? 'Embedded/' : 'NonEmbedded';
+        $prefix = env('SHOPIFY_APPBRIDGE_ENABLED') ? 'Embedded/' : 'NonEmbedded/';
         return Inertia::render($prefix . $component, $props);
     }
-
     protected function sendResponse($data = [], $message = 'Success', $code = 200)
     {
         return response()->json([
@@ -21,10 +20,15 @@ trait ResponseTrait
             'data' => $data,
         ], $code);
     }
-
-    protected function logData( $data){
+    protected function logData($data)
+    {
         Log::info(json_encode($data, JSON_PRETTY_PRINT));
+
+    }
+    protected function logInfo($data)
+    {
+        Log::info($data);
     }
 
-    
+
 }

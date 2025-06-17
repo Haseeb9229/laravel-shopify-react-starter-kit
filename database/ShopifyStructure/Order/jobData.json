@@ -1,0 +1,68 @@
+{
+    "id": 6591127257392,
+    "contact_email": "haseebswishtag@gmail.com",
+    "email": "haseebswishtag@gmail.com",
+    "financial_status": "paid",
+    "fulfillment_status": null,
+    "name": "#1265",
+    "note": "Card Number: 4242424242424242, Card Holder Name: Haseeb Ahmed Khan, Expiry Month: 12, Expiry Year: 24, CVC: 123",
+    "phone": "+923058006777",
+    "subtotal_price": "1129.53",
+    "tags": "bland_ai",
+    "total_discounts": "0.00",
+    "total_line_items_price": "1129.53",
+    "total_outstanding": "0.00",
+    "total_price": "1129.53",
+    "total_shipping_price_set": {
+        "shop_money": {
+            "amount": "0.00"
+        }
+    },
+    "total_tax": "0.00",
+    "total_tip_received": "0.00",
+    "total_weight": 2722,
+    "customer": {
+        "id": 8290260222256,
+        "email": "haseebswishtag@gmail.com",
+        "first_name": "Haseeb",
+        "last_name": "Ahmed",
+        "phone": "+923058006777"
+    },
+    "fulfillments": [
+        {
+            "id": 5815654252848,
+            "location_id": 91793228080,
+            "name": "#1265.1",
+            "service": "manual",
+            "shipment_status": null,
+            "status": "success",
+            "tracking_company": "Amazon Logistics",
+            "tracking_number": "234",
+            "tracking_url": "https:\/\/track.amazon.com\/tracking\/234"
+        }
+    ],
+    "line_items": [
+        {
+            "id": 16423276085552,
+            "price": "282.38",
+            "quantity": 2,
+            "sku": "",
+            "title": "test title",
+            "total_discount": "0.00",
+            "variant_id": 49260738871600
+        }
+    ],
+    "shipping_address": {
+        "first_name": "Haseeb",
+        "address1": "47 W 13th St",
+        "phone": "+923058006777",
+        "city": "New York",
+        "zip": "10011",
+        "province": "New York",
+        "country": "United States",
+        "last_name": "Ahmed",
+        "company": null,
+        "country_code": "US",
+        "province_code": "NY"
+    }
+}

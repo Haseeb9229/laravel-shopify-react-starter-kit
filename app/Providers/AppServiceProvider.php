@@ -2,24 +2,24 @@
 
 namespace App\Providers;
 
-use App\Repositories\CustomerOrder\CustomerOrderRepository;
-use App\Repositories\CustomerOrder\CustomerOrderRepositoryInterface;
-use App\Repositories\FulfillmentOrder\FulfillmentOrderRepository;
-use App\Repositories\FulfillmentOrder\FulfillmentOrderRepositoryInterface;
-use App\Repositories\LineItemOrder\LineItemOrderRepository;
-use App\Repositories\LineItemOrder\LineItemOrderRepositoryInterface;
-use App\Repositories\Order\OrderRepositoryInterface;
-use App\Repositories\Order\OrderRepository;
-use App\Repositories\ShippingAddress\ShippingAddressOrderRepository;
-use App\Repositories\ShippingAddress\ShippingAddressOrderRepositoryInterface;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
-use App\Repositories\Product\ProductRepositoryInterface;
+use App\Repositories\Order\OrderRepository;
 use App\Repositories\Product\ProductRepository;
-use App\Repositories\ProductVarient\ProductVarientRepositoryInterface;
-use App\Repositories\ProductVarient\ProductVarientRepository;
-use App\Repositories\ProductMedia\ProductMediaRepositoryInterface;
+use App\Repositories\Order\OrderRepositoryInterface;
+use App\Repositories\Product\ProductRepositoryInterface;
 use App\Repositories\ProductMedia\ProductMediaRepository;
+use App\Repositories\OrderCustomer\OrderCustomerRepository;
+use App\Repositories\OrderLineItem\OrderLineItemRepository;
+use App\Repositories\ProductVarient\ProductVarientRepository;
+use App\Repositories\OrderFulfillment\OrderFulfillmentRepository;
+use App\Repositories\ProductMedia\ProductMediaRepositoryInterface;
+use App\Repositories\OrderCustomer\OrderCustomerRepositoryInterface;
+use App\Repositories\OrderLineItem\OrderLineItemRepositoryInterface;
+use App\Repositories\ProductVarient\ProductVarientRepositoryInterface;
+use App\Repositories\OrderShippingAddress\OrderShippingAddressRepository;
+use App\Repositories\OrderFulfillment\OrderFulfillmentRepositoryInterface;
+use App\Repositories\OrderShippingAddress\OrderShippingAddressRepositoryInterface;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -44,22 +44,22 @@ class AppServiceProvider extends ServiceProvider
                 OrderRepositoryInterface::class,
                 OrderRepository::class
             );
-     
+
         $this->app->bind(
-            CustomerOrderRepositoryInterface::class,
-                CustomerOrderRepository::class
+            OrderCustomerRepositoryInterface::class,
+                OrderCustomerRepository::class
             );
         $this->app->bind(
-            FulfillmentOrderRepositoryInterface::class,
-                FulfillmentOrderRepository::class
+            OrderFulfillmentRepositoryInterface::class,
+                OrderFulfillmentRepository::class
             );
         $this->app->bind(
-            ShippingAddressOrderRepositoryInterface::class,
-                ShippingAddressOrderRepository::class
+            OrderShippingAddressRepositoryInterface::class,
+                OrderShippingAddressRepository::class
             );
         $this->app->bind(
-            LineItemOrderRepositoryInterface::class,
-                LineItemOrderRepository::class
+            OrderLineItemRepositoryInterface::class,
+                OrderLineItemRepository::class
             );
     }
 

@@ -4,10 +4,8 @@ namespace App\Models\Orders;
 
 use Illuminate\Database\Eloquent\Model;
 
-class ShippingAddressOrder extends Model
+class OrderShippingAddress extends Model
 {
-    protected $table = 'shipping_address_orders';
-
     protected $fillable = [
             "order_id" ,
             "first_name" ,
@@ -23,7 +21,7 @@ class ShippingAddressOrder extends Model
             "province_code"
     ];
 
-    public function Order(){
+    public function order(){
         return $this->belongsTo(Order::class);
     }
 }
