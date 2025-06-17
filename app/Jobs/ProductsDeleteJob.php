@@ -1,19 +1,20 @@
 <?php namespace App\Jobs;
 
 use stdClass;
-use App\Models\User;
 use Illuminate\Bus\Queueable;
 use App\Http\Traits\ResponseTrait;
 use Illuminate\Queue\SerializesModels;
+use App\Http\Traits\ShopifyProductTrait;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Osiset\ShopifyApp\Objects\Values\ShopDomain;
+use App\Repositories\Product\ProductRepositoryInterface;
 use Osiset\ShopifyApp\Contracts\Queries\Shop as IShopQuery;
 
 class ProductsDeleteJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, ResponseTrait;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, ResponseTrait , ShopifyProductTrait;
 
     /**
      * Shop's myshopify domain
@@ -50,11 +51,12 @@ class ProductsDeleteJob implements ShouldQueue
      */
     public function handle(IShopQuery $shopQuery)
     {
-        $this->shopDomain = ShopDomain::fromNative($this->shopDomain);
-        $shop = $shopQuery->getByDomain($this->shopDomain);
-        $user = User::where('name', $shop->name)->first();
         $payload = $this->data;
-        $this->logData($user);
-        $this->logData($payload);
+        $this->getProductRepository(app(ProductRepositoryInterface::class));
+        if($this->deleteProduct($payload->id)){
+            $this->logInfo("Product Delete Job Sucessfull.");
+        }else{
+            $this->logInfo("Product Delete Job Failed! ");
+        }
     }
 }
