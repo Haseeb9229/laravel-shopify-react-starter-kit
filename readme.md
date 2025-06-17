@@ -1,4 +1,4 @@
-# Laravel-Inertia-React Boilerplate Documentation
+# Laravel-Inertia-React Boilerplate for Shopify App Development Documentation
 
 ## Project Setup
 
@@ -91,7 +91,7 @@ QUEUE_CONNECTION=redis
 Add your Shopify app credentials to the .env file:
 
 ```env
-SHOPIFY_API_VERSION="2024-10"
+SHOPIFY_API_VERSION="2024-10" # Set the version according to your shopify app
 SHOPIFY_APP_NAME="${APP_NAME}"
 SHOPIFY_API_KEY=<your_api_key>
 SHOPIFY_API_SECRET=<your_api_secret>
@@ -100,16 +100,7 @@ SHOPIFY_BILLING_ENABLED=0
 SHOPIFY_API_SCOPES=<the_scopes_you_required_to_access_by_your_app>
 ```
 
-## 8. Session Settings for Embedded Apps
-
-For embedded apps, add the following session settings to your .env file to preserve logged-in user details:
-
-```env
-SESSION_SECURE_COOKIE=true
-SESSION_SAME_SITE='None'
-```
-
-## 9. Routes Setup
+## 8. Routes Setup
 
 To set up the routes for your application:
 
@@ -117,7 +108,7 @@ To set up the routes for your application:
     
 2. If your app is non-embedded, copy the code from routes/non_embedded_example_web.php to routes/web.php.
 
-## 10. Additional Steps for Shopify Integration
+## 9. Additional Steps for Shopify Integration
 
 In your Shopify app configuration:
 
@@ -136,7 +127,7 @@ https://your_app_url.com/authenticate
 3. Check Embedded App as true for embedded apps and false for non-embedded apps.
 4. Save the changes.
 
-## 11. React Code Integration
+## 10. React Code Integration
 
 In your React components, if your app is embedded, make sure to import the necessary hook from Inertia:
 
@@ -161,7 +152,7 @@ Use the extracted query with every route you call in your app. For example:
 
 # Note: For non-embedded apps, there is no need for this integration.
 
-## 12. Running the Application
+## 11. Running the Application
 
 To start the development server, run:
 
@@ -181,12 +172,12 @@ also put the following in your AppServiceProvider.php boot function if your usin
 \URL::forceScheme('https');
 ```
 
-## 13. Accessing the Application
+## 12. Accessing the Application
 
 You can access your application at:
 
 ```bash
-http://localhost:8000
+http://your-ngrok-url/authenticate?shop=you-shopify-store-url
 ```
 
 # Notes
