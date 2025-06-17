@@ -188,3 +188,6 @@ http://your-ngrok-url/authenticate?shop=you-shopify-store-url
 4. There is job setup is complete for Orders and Products.
 5. Sync jobs for orders and products are also done you just have to dispatch the job with user id (store user saved in database).
 6. User table has boolean colum for order_sync and product_sync.
+
+
+📄 License: All rights reserved. Forking, copying, or redistribution of this repository is not permitted without permission.
