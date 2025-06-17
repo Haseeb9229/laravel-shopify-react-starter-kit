@@ -185,3 +185,6 @@ http://your-ngrok-url/authenticate?shop=you-shopify-store-url
 1. Ensure your local development environment meets the requirements for Laravel and Node.js.
 2. Regularly check for updates in both Laravel and the dependencies used in your project.
 3. Monitor your queues using Laravel's built-in tools or by querying the database directly.
+4. There is job setup is complete for Orders and Products.
+5. Sync jobs for orders and products are also done you just have to dispatch the job with user id (store user saved in database).
+6. User table has boolean colum for order_sync and product_sync.
