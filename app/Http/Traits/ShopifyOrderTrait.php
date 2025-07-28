@@ -196,7 +196,7 @@ trait ShopifyOrderTrait
     {
         DB::beginTransaction();
         try {
-            $formatedData = $this->formateOrderData($order, $user);
+            $formatdData = $this->formatOrderData($order, $user);
             if ($update) {
                 $order = $this->order->getByShopifyId($order->id);
                 if (!$order) {
@@ -204,7 +204,7 @@ trait ShopifyOrderTrait
                     return true;
                 }
             }
-            $this->order->updateOrCreate($formatedData);
+            $this->order->updateOrCreate($formatdData);
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error("Failed to store Order: " . json_encode($order));
@@ -214,9 +214,9 @@ trait ShopifyOrderTrait
         DB::commit();
         return true;
     }
-    public function formateOrderData($order, $user)
+    public function formatOrderData($order, $user)
     {
-        $formatedOrder = [
+        $formatdOrder = [
             "shopify_order_id" => $order->id,
             "user_id" => $user->id,
             "contact_email" => $order->contact_email,
@@ -236,14 +236,14 @@ trait ShopifyOrderTrait
             "total_tax" => $order->total_tax,
             "total_tip_received" => $order->total_tip_received,
             "total_weight" => $order->total_weight,
-            "customer" => $this->formateOrderCustomerData($order->customer),
-            "line_items" => $this->formateOrderLineItemsData($order->line_items),
-            "shipping_address" => $this->formateOrderShippingAddressData($order->shipping_address),
-            "fulfillments" => $this->formateOrderFulfillmentsData($order->fulfillments)
+            "customer" => $this->formatOrderCustomerData($order->customer),
+            "line_items" => $this->formatOrderLineItemsData($order->line_items),
+            "shipping_address" => $this->formatOrderShippingAddressData($order->shipping_address),
+            "fulfillments" => $this->formatOrderFulfillmentsData($order->fulfillments)
         ];
-        return $formatedOrder;
+        return $formatdOrder;
     }
-    public function formateOrderCustomerData($customer)
+    public function formatOrderCustomerData($customer)
     {
         if (!$customer) {
             return null;
@@ -257,7 +257,7 @@ trait ShopifyOrderTrait
         ];
         return $orderCustomer;
     }
-    public function formateOrderLineItemsData($lineItems)
+    public function formatOrderLineItemsData($lineItems)
     {
         $orderLineItems = [];
         foreach ($lineItems as $item) {
@@ -273,7 +273,7 @@ trait ShopifyOrderTrait
         }
         return $orderLineItems;
     }
-    public function formateOrderShippingAddressData($shippingAddress)
+    public function formatOrderShippingAddressData($shippingAddress)
     {
         if (!$shippingAddress) {
             return null;
@@ -293,7 +293,7 @@ trait ShopifyOrderTrait
         ];
         return $orderShippingAddress;
     }
-    public function formateOrderFulfillmentsData($fulfillment)
+    public function formatOrderFulfillmentsData($fulfillment)
     {
         $orderFulfillments = [];
         foreach ($fulfillment as $fulfill) {
