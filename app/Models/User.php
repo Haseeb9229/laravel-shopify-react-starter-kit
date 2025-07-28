@@ -7,6 +7,7 @@ use App\Models\Orders\Order;
 use app\Models\Products\Product;
 use Osiset\ShopifyApp\Traits\ShopModel;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Osiset\ShopifyApp\Contracts\ShopModel as IShopModel;
@@ -16,6 +17,7 @@ class User extends Authenticatable implements IShopModel
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
     use ShopModel;
+    use SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -49,10 +51,12 @@ class User extends Authenticatable implements IShopModel
             'email_verified_at' => 'datetime',
         ];
     }
-    public function products(){
+    public function products()
+    {
         return $this->hasMany(Product::class);
     }
-    public function orders(){
+    public function orders()
+    {
         return $this->hasMany(Order::class);
     }
 }
