@@ -124,8 +124,8 @@ trait ShopifyProductTrait
     {
         DB::beginTransaction();
         try {
-            $formatedData = $this->formateProductdata($product, $user);
-            $this->product->updateOrCreate($formatedData);
+            $formatdData = $this->formatProductdata($product, $user);
+            $this->product->updateOrCreate($formatdData);
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error("Failed to store product: " . json_encode($product));
@@ -135,9 +135,9 @@ trait ShopifyProductTrait
         DB::commit();
         return true;
     }
-    public function formateProductdata($product, $user)
+    public function formatProductdata($product, $user)
     {
-        $formatedProduct = [
+        $formatdProduct = [
             'user_id' => $user->id,
             'shopify_product_id' => $product->id,
             'title' => $product->title,
@@ -147,12 +147,12 @@ trait ShopifyProductTrait
             'vendor' => $product->vendor,
             'product_type' => $product->product_type,
             'status' => $product->status,
-            'variants' => $this->formateProductvarientData($product->variants),
-            'media' => $this->formateProductMedia($product->media)
+            'variants' => $this->formatProductvarientData($product->variants),
+            'media' => $this->formatProductMedia($product->media)
         ];
-        return $formatedProduct;
+        return $formatdProduct;
     }
-    public function formateProductvarientData($variants)
+    public function formatProductvarientData($variants)
     {
         $productVarients = [];
         foreach ($variants as $varient) {
@@ -168,7 +168,7 @@ trait ShopifyProductTrait
         }
         return $productVarients;
     }
-    public function formateProductMedia($media)
+    public function formatProductMedia($media)
     {
         $productMedia = [];
         foreach ($media as $image) {
